@@ -1,11 +1,12 @@
 const Joi = require('joi');
-const { password } = require('./custom.validation');
+const { password, phoneNumber } = require('./custom.validation');
 
 const register = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
+    phoneNumber: Joi.string().required().custom(phoneNumber),
   }),
 };
 
@@ -49,6 +50,16 @@ const verifyEmail = {
   }),
 };
 
+const otpLogin = {
+  body: Joi.object().keys({
+    phoneNumber: Joi.string().required().custom(phoneNumber),
+  }),
+};
+const verifyOtp = {
+  query: Joi.object().keys({
+    otp: Joi.string().
+  }),
+};
 module.exports = {
   register,
   login,
@@ -57,4 +68,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   verifyEmail,
+  otpLogin,
+  verifyOtp,
 };

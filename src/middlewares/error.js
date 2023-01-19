@@ -6,6 +6,7 @@ const ApiError = require('../utils/ApiError');
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
+  console.log(error);
   if (!(error instanceof ApiError)) {
     const statusCode =
       error.statusCode || error instanceof mongoose.Error ? httpStatus.BAD_REQUEST : httpStatus.INTERNAL_SERVER_ERROR;

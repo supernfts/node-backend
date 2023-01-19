@@ -3,6 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { toJSON, paginate } = require('./plugins');
 const { roles } = require('../config/roles');
+const phoneUtil = require('../utils/phoneUtil');
 
 const userSchema = mongoose.Schema(
   {
@@ -13,13 +14,22 @@ const userSchema = mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       trim: true,
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
           throw new Error('Invalid email');
+        }
+      },
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      validate(value) {
+        if (!phoneUtil.isValidNumber(value)) {
+          throw new Error('Invalid phoneNumber');
         }
       },
     },

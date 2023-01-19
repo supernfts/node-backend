@@ -1,3 +1,5 @@
+const phoneUtil = require('../utils/phoneUtil');
+
 const objectId = (value, helpers) => {
   if (!value.match(/^[0-9a-fA-F]{24}$/)) {
     return helpers.message('"{{#label}}" must be a valid mongo id');
@@ -15,7 +17,20 @@ const password = (value, helpers) => {
   return value;
 };
 
+const phoneNumber = (value, helpers) => {
+  let phone;
+  try {
+    phone = phoneUtil.parse(value);
+    if (!phoneUtil.isValidNumber(phone)) {
+      return helpers.error('string.phoneNumber');
+    }
+  } catch (err) {
+    return helpers.error('string.phoneNumber');
+  }
+  return phone;
+};
 module.exports = {
   objectId,
   password,
+  phoneNumber,
 };
