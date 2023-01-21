@@ -1,19 +1,29 @@
-const express = require("express");
-const {auth,validate} = require("../../middlewares");
-const {streamValidation} = require("../../validations");
-const {streamController} = require("../../controllers");
+// const express = require("express");
+// const {auth,validate} = require("../../middlewares");
+// const {streamValidation} = require("../../validations");
+// const {streamController} = require("../../controllers");
 
-const router = express.Router();
-
-// router
-// 	.route("/stream")
-// 	.post(auth(), validate(userValidation.createUser), userController.createUser)
-// 	.get(auth("getUsers"), validate(userValidation.getUsers), userController.getUsers);
+// const router = express.Router();
 
 // router
-// 	.route("/:userId")
-// 	.get(auth("getUsers"), validate(userValidation.getUser), userController.getUser)
-// 	.patch(auth("manageUsers"), validate(userValidation.updateUser), userController.updateUser)
-// 	.delete(auth("manageUsers"), validate(userValidation.deleteUser), userController.deleteUser);
+// 	.route("/room")
+// 	.get()
+// 	.post();
 
-module.exports = router;
+// router
+// 	.route("/room/:roomId")
+// 	.post(streamController.subscribeRoom)
+// 	.patch(streamController.editRoom)
+// 	.delete(streamController.deleteRoom);
+
+// router
+// 	.route("/livestream")
+// 	.get()
+// 	.post(streamController.startStream);
+
+// router
+// 	.route("/livestream/:streamId")
+// 	.post()
+// 	.delete();
+
+// module.exports = router;
