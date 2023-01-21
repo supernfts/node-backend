@@ -148,5 +148,5 @@ VideoSchema.plugin(paginate);
 /**
  * @typedef Video
  */
-const Video = mongoose.model("ftv_video", VideoSchema);
+const Video = mongoose.model("Video", VideoSchema);
 module.exports = Video;

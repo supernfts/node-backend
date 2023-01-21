@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const { toJSON, paginate } = require("./plugins");
 const {ObjectId} = require("mongoose").Schema.Types;
+const mongodb= require("mongodb");
 
-const Room = mongoose.Schema({
+const RoomSchema = mongoose.Schema({
 	hostId: {
 		type : ObjectId,
 		require : true
@@ -25,11 +26,13 @@ const Room = mongoose.Schema({
 		required: true,
 		default: ""
 	},
-	sessionId: {
-
-	},
 	liveDate: {
-
+		type: Date,
+		required : false,
+	},
+	deletedAt: {
+		type: Date,
+		required : false
 	},
 	subscribers : {
 		type: Number,
@@ -38,92 +41,21 @@ const Room = mongoose.Schema({
 			validator : Number.isInteger,
 			message   : "{VALUE} is not an integer value"
 		}
+	},
+	streamId : {
+		type: ObjectId,
+		required: true,
+		default : new mongodb.ObjectID("000000000000000000000000"),
 	}
 });
 
-const Stats = mongoose.Schema({
-	likes :  {
-		type     : Number,
-		required : true,
-		default : 0,
-		validate : {
-			validator : Number.isInteger,
-			message   : "{VALUE} is not an integer value"
-		}
-	},
-	dislikes : {
-		type     : Number,
-		required : true,
-		default : 0,
-		validate : {
-			validator : Number.isInteger,
-			message   : "{VALUE} is not an integer value"
-		}
-	},
-	comments : {
-		type     : Number,
-		required : true,
-		default : 0,
-		validate : {
-			validator : Number.isInteger,
-			message   : "{VALUE} is not an integer value"
-		}
-	}
-}, { _id : false });
-
-const CommentSchema = mongoose.Schema(
-	{
-		parentId : {
-			type : ObjectId,
-			require : true
-		},
-		parentType : {
-			type : String,
-			require: true,
-			enum : {
-				values : ["VIDEO","COMMENT","LIVESTREAM"],
-				message : "{VALUE} is not supported"
-			}
-		},
-		userId : {
-			type : ObjectId,
-			require : true,
-			ref : "User"
-		},
-		comment : {
-			type : String,
-			require : false,
-		},
-		tags : {
-			type : [String],
-			require : true
-		},
-		channelTagged : {
-			type : ObjectId,
-			require : false
-		},
-		stats : {
-			type : Stats,
-			require: true,
-			default : () => ({})
-		},
-		deletedAt: {
-			type: Date,
-			required : false
-		},
-	},
-	{
-		timestamps: true,
-	}
-);
-
 // add plugin that converts mongoose to json
-CommentSchema.plugin(toJSON);
-CommentSchema.plugin(paginate);
+RoomSchema.plugin(toJSON);
+RoomSchema.plugin(paginate);
 
 /**
- * @typedef Comment
+ * @typedef Room
  */
-const Comment = mongoose.model("ftv_comments", CommentSchema);
+const Room = mongoose.model("Room", RoomSchema);
 
-module.exports = Comment;
+module.exports = Room;

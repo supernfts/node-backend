@@ -85,6 +85,6 @@ CommentSchema.plugin(paginate);
 /**
  * @typedef Comment
  */
-const Comment = mongoose.model("ftv_comments", CommentSchema);
+const Comment = mongoose.model("Comment", CommentSchema);
 
 module.exports = Comment;
