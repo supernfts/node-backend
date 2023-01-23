@@ -4,6 +4,8 @@ const userService = require("./user.service");
 const Token = require("../models/token.model");
 const ApiError = require("../utils/ApiError");
 const { tokenTypes } = require("../config/tokens");
+const axios = require("axios");
+const { OTP } = require("../models");
 
 /**
  * Login with username and password
@@ -71,6 +73,23 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
 	}
 };
 
+
+/**
+ * validate google reCaptcha
+ */
+const validateReCaptcha = async (token) => {
+	const secret = process.env.RECAPTCHA_SECRET_KEY;
+	const response = await axios
+		.post(`https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`)
+		.then(function (response) {
+			return response;
+		});
+	if (response.data) {
+		return response.data.success;
+	}
+	return false;
+};
+
 /**
  * Verify email
  * @param {string} verifyEmailToken
@@ -90,10 +109,24 @@ const verifyEmail = async (verifyEmailToken) => {
 	}
 };
 
+/**
+ * Verify phone
+ * @param {string} otp
+ * @returns {Promise}
+ */
+const verifyPhone = async (phone,otp) => {
+	const otpDocs = await OTP.find({phone,expiresAt : {$gt :new Date()}});
+	const otpMatches = await Promise.all(otpDocs.map((otpDoc)=> otpDoc.isOtpMatch(otp)));
+	if(!otpMatches.some((value)=>value))
+		throw new ApiError(httpStatus.UNAUTHORIZED,"OTP verification failed");
+};
+
 module.exports = {
 	loginUserWithEmailAndPassword,
 	logout,
 	refreshAuth,
 	resetPassword,
 	verifyEmail,
+	validateReCaptcha,
+	verifyPhone
 };

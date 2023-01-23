@@ -4,3 +4,4 @@ module.exports.Livestream = require("./livestream.model");
 module.exports.LivestreamUser = require("./livestream.user.model");
 module.exports.Room=require("./room.model");
 module.exports.RoomSubscriber=require("./room.subscriber.model");
+module.exports.OTP=require("./otp.model");

@@ -3,9 +3,13 @@ const moment = require("moment");
 const httpStatus = require("http-status");
 const config = require("../config/config");
 const userService = require("./user.service");
+const emailService = require("./email.service");
 const { Token } = require("../models");
 const ApiError = require("../utils/ApiError");
 const { tokenTypes } = require("../config/tokens");
+const otpUtil = require("../utils/otp.util");
+const OTP = require("../models/otp.model");
+const bcrypt = require("bcryptjs");
 
 /**
  * Generate token
@@ -53,7 +57,7 @@ const saveToken = async (token, userId, expires, type, blacklisted = false) => {
  */
 const verifyToken = async (token, type) => {
 	const payload = jwt.verify(token, config.jwt.secret);
-	const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false });
+	const tokenDoc = await Token.findOne({ token, type, user: payload.sub, blacklisted: false , expires : {$lt : new Date()}});
 	if (!tokenDoc) {
 		throw new Error("Token not found");
 	}
@@ -113,6 +117,32 @@ const generateVerifyEmailToken = async (user) => {
 	return verifyEmailToken;
 };
 
+const generateOtp = async (phone) => {
+	const expires =moment().add(config.jwt.otpExpirationMintues, "minutes");
+	const otp = otpUtil.generateOtp(config.jwt.otpLength);
+	const hashedOtp = await bcrypt.hash(otp,8);
+
+	// If the otp hasn't been sent a minute ago then the query returns new document,
+	// otherwise it return the previous otp document
+	const otpDoc = await OTP.findOneAndUpdate(
+		{
+			phone,
+			createdAt : {$gt : moment().subtract(1,"minutes").toDate() }
+		},
+		{ $setOnInsert : {
+			phone,
+			otp: hashedOtp,
+			expiresAt:expires.toDate()
+		}	},{upsert : true,new : true});
+
+	if(otpDoc.otp != hashedOtp) {
+		throw new ApiError(httpStatus.TOO_MANY_REQUESTS,"OTP has been sent less than a minute ago");
+	}
+	const request_id =await emailService.sendOtpSms(phone,otp);
+	console.log("OtpDocument",otpDoc);
+	return OTP.findByIdAndUpdate({_id : otpDoc.id},{$set : {request_id}});
+
+};
 module.exports = {
 	generateToken,
 	saveToken,
@@ -120,4 +150,5 @@ module.exports = {
 	generateAuthTokens,
 	generateResetPasswordToken,
 	generateVerifyEmailToken,
+	generateOtp
 };

@@ -27,7 +27,7 @@ const phoneNumber = (value, helpers) => {
 	} catch (err) {
 		return helpers.error("string.phoneNumber");
 	}
-	return phone;
+	return value;
 };
 module.exports = {
 	objectId,

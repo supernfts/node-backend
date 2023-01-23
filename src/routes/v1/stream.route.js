@@ -1,9 +1,11 @@
-// const express = require("express");
-// const {auth,validate} = require("../../middlewares");
-// const {streamValidation} = require("../../validations");
-// const {streamController} = require("../../controllers");
+//eslint-disable
+const express = require("express");
+const auth = require("../../middlewares/auth");
+const validate = require("../../middlewares/validate");
+const {streamValidation} = require("../../validations");
+const {streamController} = require("../../controllers");
 
-// const router = express.Router();
+const router = express.Router();
 
 // router
 // 	.route("/room")
@@ -26,4 +28,4 @@
 // 	.post()
 // 	.delete();
 
-// module.exports = router;
+module.exports = router;

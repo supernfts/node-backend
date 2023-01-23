@@ -45,10 +45,16 @@ const deleteUser = {
 	}),
 };
 
+const editProfile = {
+	body : Joi.object().keys({
+		instagram : Joi.string().required(),
+	})
+};
 module.exports = {
 	createUser,
 	getUsers,
 	getUser,
 	updateUser,
 	deleteUser,
+	editProfile
 };

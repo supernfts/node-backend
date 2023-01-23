@@ -34,10 +34,15 @@ const deleteUser = catchAsync(async (req, res) => {
 	res.status(httpStatus.NO_CONTENT).send();
 });
 
+// eslint-disable-next-line no-unused-vars
+const editProfile =  catchAsync(async (req, res) => {
+
+});
 module.exports = {
 	createUser,
 	getUsers,
 	getUser,
 	updateUser,
 	deleteUser,
+	editProfile
 };

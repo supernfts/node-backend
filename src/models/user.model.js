@@ -3,19 +3,18 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const { toJSON, paginate } = require("./plugins");
 const { roles } = require("../config/roles");
-const phoneUtil = require("../utils/phoneUtil");
+const { phoneNumber } = require("./custom.validation");
 
 const userSchema = mongoose.Schema(
 	{
 		name: {
 			type: String,
-			required: true,
+			required: false,
 			trim: true,
 		},
 		email: {
 			type: String,
 			required: false,
-			unique: true,
 			trim: true,
 			lowercase: true,
 			validate(value) {
@@ -24,18 +23,16 @@ const userSchema = mongoose.Schema(
 				}
 			},
 		},
-		phoneNumber: {
+		phone: {
 			type: String,
 			required: true,
-			validate(value) {
-				if (!phoneUtil.isValidNumber(value)) {
-					throw new Error("Invalid phoneNumber");
-				}
-			},
+			validator : phoneNumber,
+			message : "Invalid Phone number",
+			unique: true,
 		},
 		password: {
 			type: String,
-			required: true,
+			required: false,
 			trim: true,
 			minlength: 8,
 			validate(value) {
@@ -46,11 +43,15 @@ const userSchema = mongoose.Schema(
 			private: true, // used by the toJSON plugin
 		},
 		role: {
-			type: String,
+			type: [String],
 			enum: roles,
-			default: "user",
+			default: ["user"],
 		},
 		isEmailVerified: {
+			type: Boolean,
+			default: false,
+		},
+		isPhoneVerified: {
 			type: Boolean,
 			default: false,
 		},
@@ -72,6 +73,17 @@ userSchema.plugin(paginate);
  */
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
 	const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+	return !!user;
+};
+
+/**
+ * Check if phonenumber is taken
+ * @param {string} phone - The user's phonenumber
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.isPhoneTaken = async function (phone, excludeUserId) {
+	const user = await this.findOne({ phone, _id: { $ne: excludeUserId } });
 	return !!user;
 };
 
