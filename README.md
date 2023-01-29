@@ -29,9 +29,9 @@ $ yarn start
 ```
 
 ### API Reference
-/v1/auth/register-phone: registers user's phone and sends it otp
-/v1/auth/login-phone: send's otp to user's phone
-/v1/auth/verify-phone: verifies OTP sent to user's phone and return the access and refresh token for further access
+- /v1/auth/register-phone: registers user's phone and sends it otp
+- /v1/auth/login-phone: send's otp to user's phone
+- /v1/auth/verify-phone: verifies OTP sent to user's phone and return the access and refresh token for further access
 
 ### Contributing
 1. Fork the repository
